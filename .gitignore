@@ -1,0 +1,23 @@
+# Django specific exclusions
+*.pyc
+__pycache__/
+venv/
+.venv/
+env/
+db.sqlite3
+media/
+static/
+.idea/
+*.iml
+local_settings.py
+
+# Angular project directory specific exclusions
+# Assuming your Angular project is in a subfolder named 'frontend'
+frontend/node_modules/
+frontend/dist/
+frontend/.angular/
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/yarn-error.log*
+frontend/.vscode/
+frontend/.history/

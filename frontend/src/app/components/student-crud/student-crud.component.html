@@ -1,0 +1,319 @@
+<div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-8 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-7xl mx-auto">
+    
+    <!-- Header -->
+    <div class="text-center mb-8">
+      <h1 class="text-4xl font-bold text-gray-900 mb-2">Student Management System</h1>
+      <p class="text-gray-600">Manage your student records efficiently</p>
+    </div>
+
+    <!-- Alert Message -->
+    <div 
+      *ngIf="alertMessage" 
+      class="mb-6 p-4 rounded-lg shadow-md animate-slide-down"
+      [ngClass]="{
+        'bg-green-100 border-l-4 border-green-500 text-green-700': alertType === 'success',
+        'bg-red-100 border-l-4 border-red-500 text-red-700': alertType === 'error'
+      }">
+      <div class="flex items-center">
+        <svg *ngIf="alertType === 'success'" class="w-6 h-6 mr-3" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+        </svg>
+        <svg *ngIf="alertType === 'error'" class="w-6 h-6 mr-3" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+        </svg>
+        <span class="font-semibold">{{ alertMessage }}</span>
+      </div>
+    </div>
+
+    <!-- List View -->
+    <div *ngIf="currentView === 'list'" class="bg-white rounded-xl shadow-lg overflow-hidden">
+      <div class="px-6 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 flex justify-between items-center">
+        <h2 class="text-2xl font-bold text-white">Students List</h2>
+        <button 
+          (click)="showAddForm()"
+          class="btn btn-light flex items-center space-x-2 hover:scale-105 transform transition">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+          </svg>
+          <span>Add New Student</span>
+        </button>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">City</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Birth Date</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            <tr *ngFor="let student of students" class="hover:bg-blue-50 transition-colors">
+              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ student.id }}</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-semibold">{{ student.student_name }}</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{{ student.city }}</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{{ student.birth_date | date:'dd/MM/yyyy' }}</td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <span 
+                  class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full"
+                  [ngClass]="{
+                    'bg-green-100 text-green-800': student.is_active,
+                    'bg-red-100 text-red-800': !student.is_active
+                  }">
+                  {{ student.is_active ? 'Active' : 'Inactive' }}
+                </span>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
+                <button (click)="showViewDetails(student)" class="btn btn-info btn-sm">
+                  <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                  </svg>
+                  View
+                </button>
+                <button (click)="showEditForm(student)" class="btn btn-warning btn-sm">
+                  <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                  </svg>
+                  Edit
+                </button>
+                <button (click)="onDelete(student.id!, student.student_name)" class="btn btn-danger btn-sm">
+                  <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                  </svg>
+                  Delete
+                </button>
+              </td>
+            </tr>
+            <tr *ngIf="students.length === 0">
+              <td colspan="6" class="px-6 py-12 text-center">
+                <div class="flex flex-col items-center justify-center text-gray-500">
+                  <svg class="w-16 h-16 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/>
+                  </svg>
+                  <p class="text-lg font-semibold mb-2">No students found</p>
+                  <p class="text-sm">Click "Add New Student" to create your first student record.</p>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- View Details -->
+    <div *ngIf="currentView === 'view' && selectedStudent" class="bg-white rounded-xl shadow-lg overflow-hidden">
+      <div class="px-6 py-4 bg-gradient-to-r from-teal-600 to-cyan-600">
+        <h2 class="text-2xl font-bold text-white">Student Details</h2>
+      </div>
+
+      <div class="p-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="bg-gradient-to-br from-blue-50 to-indigo-50 p-4 rounded-lg border border-blue-200">
+            <label class="text-sm font-semibold text-gray-600 uppercase tracking-wide">ID</label>
+            <p class="mt-1 text-lg font-bold text-gray-900">{{ selectedStudent.id }}</p>
+          </div>
+
+          <div class="bg-gradient-to-br from-blue-50 to-indigo-50 p-4 rounded-lg border border-blue-200">
+            <label class="text-sm font-semibold text-gray-600 uppercase tracking-wide">Student Name</label>
+            <p class="mt-1 text-lg font-bold text-gray-900">{{ selectedStudent.student_name }}</p>
+          </div>
+
+          <div class="bg-gradient-to-br from-blue-50 to-indigo-50 p-4 rounded-lg border border-blue-200">
+            <label class="text-sm font-semibold text-gray-600 uppercase tracking-wide">City</label>
+            <p class="mt-1 text-lg font-bold text-gray-900">{{ selectedStudent.city }}</p>
+          </div>
+
+          <div class="bg-gradient-to-br from-blue-50 to-indigo-50 p-4 rounded-lg border border-blue-200">
+            <label class="text-sm font-semibold text-gray-600 uppercase tracking-wide">Birth Date</label>
+            <p class="mt-1 text-lg font-bold text-gray-900">{{ selectedStudent.birth_date | date:'dd/MM/yyyy' }}</p>
+          </div>
+
+          <div class="bg-gradient-to-br from-blue-50 to-indigo-50 p-4 rounded-lg border border-blue-200 md:col-span-2">
+            <label class="text-sm font-semibold text-gray-600 uppercase tracking-wide">Address</label>
+            <p class="mt-1 text-lg text-gray-900">{{ selectedStudent.address }}</p>
+          </div>
+
+          <div class="bg-gradient-to-br from-blue-50 to-indigo-50 p-4 rounded-lg border border-blue-200">
+            <label class="text-sm font-semibold text-gray-600 uppercase tracking-wide">Status</label>
+            <p class="mt-1">
+              <span 
+                class="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold"
+                [ngClass]="{
+                  'bg-green-100 text-green-800': selectedStudent.is_active,
+                  'bg-red-100 text-red-800': !selectedStudent.is_active
+                }">
+                {{ selectedStudent.is_active ? 'Active' : 'Inactive' }}
+              </span>
+            </p>
+          </div>
+
+          <div class="bg-gradient-to-br from-blue-50 to-indigo-50 p-4 rounded-lg border border-blue-200">
+            <label class="text-sm font-semibold text-gray-600 uppercase tracking-wide">Created At</label>
+            <p class="mt-1 text-lg text-gray-900">{{ selectedStudent.created_at | date:'dd/MM/yyyy HH:mm' }}</p>
+          </div>
+
+          <div class="bg-gradient-to-br from-blue-50 to-indigo-50 p-4 rounded-lg border border-blue-200 md:col-span-2">
+            <label class="text-sm font-semibold text-gray-600 uppercase tracking-wide">Last Updated</label>
+            <p class="mt-1 text-lg text-gray-900">{{ selectedStudent.updated_at | date:'dd/MM/yyyy HH:mm' }}</p>
+          </div>
+        </div>
+
+        <div class="mt-6 flex justify-end space-x-4">
+          <button type="button" (click)="onCancel()" class="btn btn-secondary">
+            <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+            </svg>
+            Back to List
+          </button>
+          <button type="button" (click)="showEditForm(selectedStudent)" class="btn btn-primary">
+            <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+            </svg>
+            Edit Student
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Add/Edit Form -->
+    <div *ngIf="currentView === 'add' || currentView === 'edit'" class="bg-white rounded-xl shadow-lg overflow-hidden">
+      <div class="px-6 py-4 bg-gradient-to-r from-purple-600 to-indigo-600">
+        <h2 class="text-2xl font-bold text-white">
+          {{ currentView === 'add' ? 'Add New Student' : 'Edit Student' }}
+        </h2>
+      </div>
+
+      <form [formGroup]="studentForm" (ngSubmit)="onSubmit()" class="p-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          
+          <!-- Student Name -->
+          <div class="md:col-span-2">
+            <label for="student_name" class="label">
+              Student Name <span class="text-red-500">*</span>
+            </label>
+            <input 
+              type="text" 
+              id="student_name" 
+              formControlName="student_name"
+              class="input-field"
+              [ngClass]="{'input-error': f['student_name'].invalid && f['student_name'].touched}"
+              placeholder="Enter student full name">
+            <div *ngIf="f['student_name'].invalid && f['student_name'].touched" class="mt-1 text-sm text-red-600">
+              <p *ngIf="f['student_name'].errors?.['required']">Student name is required</p>
+              <p *ngIf="f['student_name'].errors?.['maxlength']">Maximum 100 characters allowed</p>
+            </div>
+          </div>
+
+          <!-- City -->
+          <div>
+            <label for="city" class="label">
+              City <span class="text-red-500">*</span>
+            </label>
+            <select 
+              id="city" 
+              formControlName="city"
+              class="input-field"
+              [ngClass]="{'input-error': f['city'].invalid && f['city'].touched}">
+              <option value="">Select a city</option>
+              <option *ngFor="let city of cities" [value]="city">{{ city }}</option>
+            </select>
+            <div *ngIf="f['city'].invalid && f['city'].touched" class="mt-1 text-sm text-red-600">
+              <p *ngIf="f['city'].errors?.['required']">City is required</p>
+            </div>
+          </div>
+
+          <!-- Birth Date -->
+          <div>
+            <label for="birth_date" class="label">
+              Birth Date <span class="text-red-500">*</span>
+            </label>
+            <input 
+              type="date" 
+              id="birth_date" 
+              formControlName="birth_date"
+              class="input-field"
+              [ngClass]="{'input-error': f['birth_date'].invalid && f['birth_date'].touched}">
+            <div *ngIf="f['birth_date'].invalid && f['birth_date'].touched" class="mt-1 text-sm text-red-600">
+              <p *ngIf="f['birth_date'].errors?.['required']">Birth date is required</p>
+            </div>
+          </div>
+
+          <!-- Address -->
+          <div class="md:col-span-2">
+            <label for="address" class="label">
+              Address <span class="text-red-500">*</span>
+            </label>
+            <textarea 
+              id="address" 
+              formControlName="address"
+              rows="4"
+              class="input-field"
+              [ngClass]="{'input-error': f['address'].invalid && f['address'].touched}"
+              placeholder="Enter full address"></textarea>
+            <div *ngIf="f['address'].invalid && f['address'].touched" class="mt-1 text-sm text-red-600">
+              <p *ngIf="f['address'].errors?.['required']">Address is required</p>
+            </div>
+          </div>
+
+          <!-- Is Active -->
+          <div class="md:col-span-2">
+            <label class="flex items-center cursor-pointer group">
+              <input 
+                type="checkbox" 
+                formControlName="is_active"
+                class="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500 focus:ring-2 cursor-pointer">
+              <span class="ml-3 text-sm font-semibold text-gray-700 group-hover:text-blue-600 transition-colors">
+                Is Active
+              </span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Form Actions -->
+        <div class="mt-8 flex flex-col sm:flex-row justify-end space-y-3 sm:space-y-0 sm:space-x-4">
+          <button 
+            type="button" 
+            (click)="onCancel()" 
+            [disabled]="isSubmitting"
+            class="btn btn-secondary w-full sm:w-auto">
+            <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+            Cancel
+          </button>
+          
+          <button 
+            type="button" 
+            (click)="onReset()" 
+            [disabled]="isSubmitting"
+            class="btn btn-light w-full sm:w-auto">
+            <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+            Reset
+          </button>
+          
+          <button 
+            type="submit" 
+            [disabled]="isSubmitting"
+            class="btn btn-primary w-full sm:w-auto disabled:opacity-50 disabled:cursor-not-allowed">
+            <svg *ngIf="!isSubmitting" class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+            </svg>
+            <svg *ngIf="isSubmitting" class="animate-spin w-5 h-5 inline mr-2" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            {{ isSubmitting ? 'Submitting...' : 'Submit' }}
+          </button>
+        </div>
+      </form>
+    </div>
+
+  </div>
+</div>
